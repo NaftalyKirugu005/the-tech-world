@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - AgriSupplies Kenya</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Background with agricultural theme */
+        body {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.05) 0%, rgba(255, 140, 0, 0.05) 100%),
+                        url('https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200&h=800&fit=crop') fixed center/cover;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Header Styling */
+        .cart-header {
+            background: linear-gradient(135deg, #228B22 0%, #32CD32 100%);
+            padding: 30px 0;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 24px rgba(34, 139, 34, 0.2);
+            color: white;
+        }
+
+        .cart-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-continue-shopping {
+            background: white;
+            color: #228B22;
+            border: none;
+            padding: 10px 25px;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-continue-shopping:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            color: #228B22;
+        }
+
+        /* Empty Cart Message */
+        .empty-cart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        .empty-cart-container h4 {
+            color: #228B22;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .empty-cart-container p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        .btn-browse {
+            background: linear-gradient(135deg, #228B22 0%, #32CD32 100%);
+            border: none;
+            padding: 12px 35px;
+            color: white;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .btn-browse:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(34, 139, 34, 0.4);
+            background: linear-gradient(135deg, #1a6b1a 0%, #22c222 100%);
+        }
+
+        /* Cart Table */
+        .cart-table-wrapper {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 3px solid #228B22;
+        }
+
+        .table thead th {
+            color: #228B22;
+            font-weight: 700;
+            padding: 18px 15px;
+            border: none;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+            transform-origin: left;
+        }
+
+        .table tbody td {
+            padding: 18px 15px;
+            vertical-align: middle;
+            color: #333;
+        }
+
+        /* Cart Image */
+        .cart-img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #228B22;
+            box-shadow: 0 4px 8px rgba(34, 139, 34, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover .cart-img {
+            transform: scale(1.05);
+            border-color: #FF8C00;
+        }
+
+        /* Product Details */
+        .product-info strong {
+            color: #228B22;
+            font-size: 1.05rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .product-info p {
+            color: #999;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Price Styling */
+        .price-cell {
+            font-weight: 700;
+            color: #FF8C00;
+            font-size: 1.1rem;
+        }
+
+        .quantity-badge {
+            background: linear-gradient(135deg, #228B22, #32CD32);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1rem;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(34, 139, 34, 0.2);
+        }
+
+        /* Subtotal */
+        .subtotal {
+            font-weight: 800;
+            color: #228B22;
+            font-size: 1.2rem;
+        }
+
+        /* Summary Section */
+        .cart-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            padding-top: 20px;
+            padding-bottom: 0;
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .summary-label {
+            color: #555;
+            font-weight: 600;
+        }
+
+        .summary-value {
+            color: #228B22;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .summary-row:last-child .summary-value {
+            color: #FF8C00;
+            font-size: 1.8rem;
+        }
+
+        /* Action Buttons */
+        .cart-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn-clear-cart {
+            background: linear-gradient(135deg, #DC3545, #E74C3C);
+            border: none;
+            padding: 12px 30px;
+            color: white;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-clear-cart:hover {
+            background: linear-gradient(135deg, #C82333, #D84033);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-checkout {
+            background: linear-gradient(135deg, #0066CC, #0072E6);
+            border: none;
+            padding: 14px 50px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-checkout:hover {
+            background: linear-gradient(135deg, #0052A3, #0059CC);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 102, 204, 0.4);
+        }
+
+        /* Checkout Message */
+        .checkout-message {
+            background: #E3F2FD;
+            color: #0066CC;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #0066CC;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cart-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .table thead {
+                font-size: 0.8rem;
+            }
+
+            .table tbody td {
+                padding: 12px 8px;
+                font-size: 0.9rem;
+            }
+
+            .cart-img {
+                width: 70px;
+                height: 70px;
+            }
+
+            .cart-actions {
+                flex-direction: column;
+            }
+
+            .btn-clear-cart,
+            .btn-checkout {
+                width: 100%;
+            }
+
+            .summary-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .summary-row:last-child {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cart-table-wrapper,
+        .cart-summary {
+            animation: slideInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <!-- Cart Header -->
+        <div class="cart-header">
+            <div class="header-controls">
+                <div>
+                    <h1>🛒 Your Shopping Cart</h1>
+                </div>
+                <a href="/" class="btn-continue-shopping">← Continue Shopping</a>
+            </div>
+        </div>
+
+        <!-- Empty Cart Section -->
+        <div th:if="${cartItems.isEmpty()}" class="empty-cart-container">
+            <h4>🌾 Your cart is empty</h4>
+            <p>Discover premium agricultural supplies, tractor hire, veterinary services, and livestock care products!</p>
+            <p style="font-size: 4rem;">📦</p>
+            <a href="/" class="btn-browse">Browse Our Products</a>
+        </div>
+
+        <!-- Cart Items Section -->
+        <div th:if="${not cartItems.isEmpty()}">
+            <!-- Cart Table -->
+            <div class="cart-table-wrapper">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width: 110px; text-align: center;">Product Image</th>
+                            <th>Product / Service</th>
+                            <th>Category</th>
+                            <th class="text-end" style="width: 140px;">Unit Price (KES)</th>
+                            <th class="text-center" style="width: 120px;">Quantity</th>
+                            <th class="text-end" style="width: 150px;">Subtotal (KES)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${cartItems}">
+                            <!-- Product Image -->
+                            <td style="text-align: center;">
+                                <img th:src="${item.product.imageUrl}" 
+                                     class="cart-img" 
+                                     th:alt="'Product: ' + ${item.product.name}"
+                                     onerror="this.src='https://images.unsplash.com/photo-1599599810694-9de7da57a6c8?w=100&h=100&fit=crop'">
+                            </td>
+
+                            <!-- Product Name & Description -->
+                            <td>
+                                <div class="product-info">
+                                    <strong th:text="${item.product.name}"></strong>
+                                    <p th:text="${item.product.description}"></p>
+                                </div>
+                            </td>
+
+                            <!-- Category -->
+                            <td>
+                                <span style="background: #E8F5E9; color: #228B22; padding: 6px 12px; border-radius: 15px; font-weight: 600; font-size: 0.85rem;">
+                                    <span th:text="${item.product.category}"></span>
+                                </span>
+                            </td>
+
+                            <!-- Unit Price -->
+                            <td class="text-end price-cell">
+                                KES <span th:text="${item.product.price}"></span>
+                            </td>
+
+                            <!-- Quantity -->
+                            <td class="text-center">
+                                <span class="quantity-badge" th:text="${item.quantity}"></span>
+                            </td>
+
+                            <!-- Subtotal -->
+                            <td class="text-end subtotal">
+                                KES <span th:text="${#numbers.formatInteger(item.product.price * item.quantity, 0, 'en_US')}"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Cart Summary -->
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span class="summary-label">Subtotal:</span>
+                    <span class="summary-value">KES <span th:text="${#numbers.formatInteger(total, 0, 'en_US')}"></span></span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Shipping:</span>
+                    <span class="summary-value">FREE</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Order Total:</span>
+                    <span class="summary-value">KES <span th:text="${#numbers.formatInteger(total, 0, 'en_US')}"></span></span>
+                </div>
+            </div>
+
+            <!-- Checkout Info -->
+            <div class="checkout-message">
+                💳 M-Pesa Integration Coming Soon! Secure checkout experience for agricultural professionals.
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="cart-actions">
+                <form action="/cart/clear" method="post" style="flex: 1;">
+                    <button type="submit" class="btn-clear-cart" style="width: 100%;">🗑️ Clear Cart</button>
+                </form>
+                <button class="btn-checkout" 
+                        onclick="alert('🚀 Checkout feature coming soon! M-Pesa integration and order management features will be available shortly.');"
+                        style="flex: 2;">
+                    Proceed to Checkout 💰
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

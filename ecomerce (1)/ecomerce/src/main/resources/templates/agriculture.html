@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriSupplies Kenya • Premium Agricultural Marketplace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Hero Section */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.75) 0%, rgba(85, 107, 47, 0.75) 100%), 
+                        url('https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200&h=400&fit=crop') center/cover;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 50px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .hero-banner h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 15px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .hero-banner p {
+            font-size: 1.4rem;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1.2s ease-in-out;
+        }
+
+        /* Section Styling */
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #228B22;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #228B22, #FF8C00);
+            border-radius: 2px;
+        }
+
+        /* Card Styling */
+        .product-card {
+            height: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 28px rgba(34, 139, 34, 0.25);
+            border: 2px solid #228B22;
+        }
+
+        .product-image-wrapper {
+            position: relative;
+            height: 260px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.08);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #FF8C00, #FFB347);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(255, 140, 0, 0.3);
+        }
+
+        .product-card-body {
+            padding: 20px;
+        }
+
+        .product-card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #228B22;
+            margin-bottom: 10px;
+        }
+
+        .product-description {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            min-height: 50px;
+        }
+
+        .product-category {
+            display: inline-block;
+            background: #E8F5E9;
+            color: #228B22;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #FF8C00;
+            margin: 15px 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .add-to-cart-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .quantity-input {
+            width: 70px;
+            border: 2px solid #228B22;
+            border-radius: 8px;
+            padding: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .btn-add-cart {
+            flex-grow: 1;
+            background: linear-gradient(135deg, #228B22 0%, #32CD32 100%);
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .btn-add-cart:hover {
+            background: linear-gradient(135deg, #1a6b1a 0%, #22c222 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(34, 139, 34, 0.4);
+            color: white;
+        }
+
+        /* Video Section */
+        .video-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 60px 20px;
+            border-radius: 12px;
+            margin-bottom: 50px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+        }
+
+        .btn-view-cart {
+            background: linear-gradient(135deg, #0066CC 0%, #0052A3 100%);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-view-cart:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 102, 204, 0.4);
+            background: linear-gradient(135deg, #0052A3 0%, #003d7a 100%);
+            color: white;
+        }
+
+        /* SERVICE CARDS */
+        .service-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            border: 2px solid transparent;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 28px rgba(34, 139, 34, 0.2);
+            border-color: #228B22;
+        }
+
+        .service-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .service-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #228B22;
+            margin-bottom: 12px;
+        }
+
+        .service-card p {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .service-card strong {
+            color: #FF8C00;
+        }
+
+        /* MARKET PRICES TABLE */
+        .market-prices-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .market-prices-table thead {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 3px solid #228B22;
+        }
+
+        .market-prices-table thead th {
+            color: #228B22;
+            font-weight: 700;
+            padding: 18px 15px;
+            text-align: left;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .market-prices-table tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.3s ease;
+        }
+
+        .market-prices-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .market-prices-table tbody td {
+            padding: 16px 15px;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .market-prices-table tbody td:first-child {
+            font-weight: 600;
+            color: #228B22;
+        }
+
+        .trend-up {
+            color: #228B22;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .trend-down {
+            color: #DC3545;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .trend-stable {
+            color: #666;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-banner {
+                height: 300px;
+                margin-bottom: 30px;
+            }
+
+            .hero-banner h1 {
+                font-size: 2rem;
+            }
+
+            .hero-banner p {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .product-price {
+                font-size: 1.5rem;
+            }
+        }
+
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+        <div>
+            <h1>🌾 AgriSupplies Kenya</h1>
+            <p>Premium Agricultural Solutions for Modern Farmers</p>
+        </div>
+    </div>
+
+    <div class="container py-4">
+        <!-- Featured Video Section -->
+        <div class="video-section">
+            <h2 class="section-title" style="color: white; margin-bottom: 30px;">Watch: Sustainable Farming Practices</h2>
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/4dCQG3dVKRE?rel=0&modestbranding=1" 
+                    title="Sustainable Farming Practices - Agricultural Guide"
+                    allowfullscreen="" 
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            <p style="text-align: center; margin-top: 20px; color: #555;">Learn best practices for sustainable farming from industry experts</p>
+        </div>
+
+        <!-- Products Section -->
+        <h2 class="section-title">Our Offerings</h2>
+        <div class="row">
+            <div th:each="product : ${products}" class="col-lg-4 col-md-6 mb-5">
+                <div class="product-card">
+                    <!-- Product Image -->
+                    <div class="product-image-wrapper">
+                        <!-- Dynamic product images based on category -->
+                        <img th:if="${product.category.name() == 'TRACTOR_HIRE'}" 
+                             src="https://images.unsplash.com/photo-1611532854597-4d71f3fe77df?w=500&h=400&fit=crop" 
+                             class="product-image" 
+                             alt="John Deere Tractor for hire - agricultural machinery"
+                             loading="lazy">
+                        <img th:if="${product.category.name() == 'VETERINARIAN_SERVICES'}" 
+                             src="https://images.unsplash.com/photo-1612949508843-38593e5c5a04?w=500&h=400&fit=crop" 
+                             class="product-image" 
+                             alt="Professional veterinarian examining livestock - farm services"
+                             loading="lazy">
+                        <img th:if="${product.category.name() == 'CHICKS'}" 
+                             src="https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=500&h=400&fit=crop" 
+                             class="product-image" 
+                             alt="Day-old chicks - poultry farming supplies"
+                             loading="lazy">
+                        <img th:if="${product.category.name() == 'SEEDS'}" 
+                             src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&h=400&fit=crop" 
+                             class="product-image" 
+                             alt="Premium farm seeds - agriculture supplies"
+                             loading="lazy">
+                        <img th:if="${product.category.name() == 'FERTILIZERS'}" 
+                             src="https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=500&h=400&fit=crop" 
+                             class="product-image" 
+                             alt="Fertilizer bags - soil nutrients"
+                             loading="lazy">
+                        <img th:if="${product.category.name() == 'PESTICIDES_HERBICIDES'}" 
+                             src="https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=500&h=400&fit=crop" 
+                             class="product-image" 
+                             alt="Pesticide and herbicide products"
+                             loading="lazy">
+                        <img th:if="${product.category.name() == 'FARM_TOOLS'}" 
+                             src="https://images.unsplash.com/photo-1585964694335-fa6ffde7c130?w=500&h=400&fit=crop" 
+                             class="product-image" 
+                             alt="Farm tools - hoes, spades, rakes"
+                             loading="lazy">
+                        <img th:if="${product.category.name() == 'LIVESTOCK_FEED'}" 
+                             src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=500&h=400&fit=crop" 
+                             class="product-image" 
+                             alt="Premium livestock feed - quality animal nutrition"
+                             loading="lazy">
+                        <img th:if="${product.category.name() == 'POULTRY_SUPPLIES'}" 
+                             src="https://images.unsplash.com/photo-1548194545-c8c86291b86b?w=500&h=400&fit=crop" 
+                             class="product-image" 
+                             alt="Poultry supplies - chicken feed and equipment"
+                             loading="lazy">
+                        <img th:if="${product.category.name() == 'MACHINERY_PARTS'}" 
+                             src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&h=400&fit=crop" 
+                             class="product-image" 
+                             alt="Machinery and spare parts - agricultural equipment"
+                             loading="lazy">
+
+                        <!-- Fallback for unknown categories -->
+                        <img th:unless="${product.category.name() == 'TRACTOR_HIRE' or product.category.name() == 'VETERINARIAN_SERVICES' or product.category.name() == 'CHICKS' or product.category.name() == 'SEEDS' or product.category.name() == 'FERTILIZERS' or product.category.name() == 'PESTICIDES_HERBICIDES' or product.category.name() == 'FARM_TOOLS' or product.category.name() == 'LIVESTOCK_FEED' or product.category.name() == 'POULTRY_SUPPLIES' or product.category.name() == 'MACHINERY_PARTS'}" 
+                             th:src="${product.imageUrl}" 
+                             class="product-image" 
+                             th:alt="'Product: ' + ${product.name}"
+                             loading="lazy">
+
+                        <span class="product-badge" th:text="${product.stock > 0 ? 'In Stock' : 'Service'}"></span>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="product-card-body">
+                        <h5 class="product-card-title" th:text="${product.name}"></h5>
+                        <span class="product-category" th:text="${product.category}"></span>
+                        <p class="product-description" th:text="${product.description}"></p>
+                        <p class="product-price">KES <span th:text="${product.price}"></span></p>
+
+                        <!-- Add to Cart Form -->
+                        <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post" class="add-to-cart-form">
+                            <input type="number" 
+                                   name="quantity" 
+                                   value="1" 
+                                   min="1" 
+                                   th:max="${product.stock > 0 ? product.stock : ''}" 
+                                   class="quantity-input form-control"
+                                   placeholder="Qty">
+                            <button type="submit" class="btn btn-add-cart">Add to Cart 🛒</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <a href="/cart" class="btn-view-cart">View Cart → 🛒</a>
+        </div>
+
+        <!-- SERVICES SECTION -->
+        <hr style="margin-top: 80px; margin-bottom: 60px; border: none; border-top: 2px solid #228B22; opacity: 0.3;">
+        
+        <h2 class="section-title" style="color: #228B22;">🌳 Our Premium Services</h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">🚜</div>
+                    <h3>Tractor Hire Services</h3>
+                    <p>Professional tractor ploughing and land preparation services. Our John Deere tractors are well-maintained and operated by experienced farmers. Perfect for land preparation, harrowing, and cultivation.</p>
+                    <p><strong>Rate:</strong> KES 5,000/hour</p>
+                    <p><strong>Service Area:</strong> Nairobi & outskirts</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">🏥</div>
+                    <h3>Veterinary Services</h3>
+                    <p>Expert livestock health management and treatment. Our qualified veterinarians provide farm visits for diagnosis, treatment, and preventive care of cattle, goats, sheep, and pigs.</p>
+                    <p><strong>Rate:</strong> KES 3,000/visit</p>
+                    <p><strong>Services:</strong> Consultation, vaccination, treatment</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">⚙️</div>
+                    <h3>Machinery Installation</h3>
+                    <p>Professional installation and setup of agricultural machinery including water pumps, generators, grinding mills, and irrigation systems. Includes testing and operator training.</p>
+                    <p><strong>Rate:</strong> Starting from KES 7,500</p>
+                    <p><strong>Warranty:</strong> 90 days after installation</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">🌾</div>
+                    <h3>Fertilizer & Soil Advisory</h3>
+                    <p>Expert guidance on soil testing, fertilizer selection, and application rates. We help farmers choose the right nutrients for their crops to maximize yield and sustainability.</p>
+                    <p><strong>Service:</strong> Free consultation with purchase</p>
+                    <p><strong>Benefit:</strong> Increase yield by up to 40%</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">🐔</div>
+                    <h3>Poultry & Chick Supply</h3>
+                    <p>Day-old chicks from certified breeders with health certificates. We supply both Kienyeji and broiler chicks with guidance on proper feeding and management from day one.</p>
+                    <p><strong>Varieties:</strong> Kienyeji, Broiler, Layer</p>
+                    <p><strong>Delivery:</strong> Same-day or next-day available</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">📊</div>
+                    <h3>Farm Business Consulting</h3>
+                    <p>AI-powered farming advice and market linkage services. Get recommendations on crop selection, planting schedules, pest management, and connect to premium export markets.</p>
+                    <p><strong>Feature:</strong> AI crop recommendations</p>
+                    <p><strong>Benefit:</strong> Access international markets</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MARKET PRICES SECTION -->
+        <hr style="margin-top: 80px; margin-bottom: 60px; border: none; border-top: 2px solid #228B22; opacity: 0.3;">
+        
+        <h2 class="section-title" style="color: #228B22;">📈 Current Market Prices for Farm Produce</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 0.95rem;">
+            <em>Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></span></em>
+        </p>
+
+        <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);">
+            <table class="market-prices-table">
+                <thead>
+                    <tr>
+                        <th>Produce Name</th>
+                        <th>Unit</th>
+                        <th style="text-align: right;">Price Range (KES)</th>
+                        <th style="text-align: center;">Market Trend</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Maize (White)</strong></td>
+                        <td>per 90kg bag</td>
+                        <td style="text-align: right;">3,800 - 4,500</td>
+                        <td style="text-align: center;" class="trend-stable">→ Stable</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Beans (Rose Coco)</strong></td>
+                        <td>per kg</td>
+                        <td style="text-align: right;">120 - 160</td>
+                        <td style="text-align: center;" class="trend-up">↑ Rising</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Potatoes (Irish)</strong></td>
+                        <td>per 50kg bag</td>
+                        <td style="text-align: right;">2,200 - 3,000</td>
+                        <td style="text-align: center;" class="trend-down">↓ Falling</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tomatoes (Fresh)</strong></td>
+                        <td>per kg</td>
+                        <td style="text-align: right;">40 - 80</td>
+                        <td style="text-align: center;" class="trend-up">↑ Rising</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Onions (Red)</strong></td>
+                        <td>per kg</td>
+                        <td style="text-align: right;">35 - 65</td>
+                        <td style="text-align: center;" class="trend-stable">→ Stable</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cabbages</strong></td>
+                        <td>per kg</td>
+                        <td style="text-align: right;">15 - 35</td>
+                        <td style="text-align: center;" class="trend-down">↓ Falling</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Carrots (Fresh)</strong></td>
+                        <td>per kg</td>
+                        <td style="text-align: right;">45 - 80</td>
+                        <td style="text-align: center;" class="trend-stable">→ Stable</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Spinach (Sukuma Wiki)</strong></td>
+                        <td>per bunch</td>
+                        <td style="text-align: right;">10 - 25</td>
+                        <td style="text-align: center;" class="trend-down">↓ Falling</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Milk (Cow)</strong></td>
+                        <td>per liter</td>
+                        <td style="text-align: right;">45 - 55</td>
+                        <td style="text-align: center;" class="trend-up">↑ Rising</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Eggs (Chicken)</strong></td>
+                        <td>per crate (30)</td>
+                        <td style="text-align: right;">350 - 450</td>
+                        <td style="text-align: center;" class="trend-stable">→ Stable</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p style="text-align: center; margin-top: 20px; color: #999; font-size: 0.9rem;">
+            💡 <em>Prices vary by location and seasonality. For real-time market updates, contact our agricultural extension officers.</em>
+        </p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
